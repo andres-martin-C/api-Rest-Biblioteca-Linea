@@ -15,9 +15,8 @@ final class connection
     private static $url;
     // Instancia de la misma clase actual.
     private static $objConnection = null;
-    private static $contador = 0;
     // Instancia que me dará el PDO.
-    public $objPDO = null;
+    private static $objPDO = null;
 
     /**
      * TODO: Constructor privado donde nadie podrá crear una nueva instancia
@@ -27,7 +26,7 @@ final class connection
         // Bloque try-catch
         try {
             // Me regresa un objeto de la clase PDO para que yo pueda hacer las operaciones CRUD
-            $this->objPDO = $this->connectDatabase();
+            self::$objPDO = self::connectDatabase();
             // Captura el error por si hay un problema.
         } catch (PDOException $eror) {
             echo 'No hizo la conexión';
@@ -41,27 +40,28 @@ final class connection
      *
      * @return PDO
      */
-    private function connectDatabase(): PDO
+    final public static function connectDatabase(): PDO
     {
         // Preguntamos si el objetoPDO si es null
-        if ($this->objPDO === null) {
+        if (self::$objPDO === null) {
             self::$url = "mysql:host=" . self::$serverName . ";dbname=" . self::$nameDataBase;
-            $this->objPDO = new PDO(self::$url, self::$userDatabase, self::$passwordUserDataBase);
-            $this->objPDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Establecer el modo de error.
+            self::$objPDO = new PDO(self::$url, self::$userDatabase, self::$passwordUserDataBase);
+            self::$objPDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Establecer el modo de error.
         }
-        return $this->objPDO;
+        return self::$objPDO;
     }
 
     /**
-     * Undocumented function
+     * TODO: Método para obtener 
      *
      * @return connection
      */
-    public static function instanceObject(): connection
+    final public static function instanceObject(): connection
     {
         if (self::$objConnection == null) {
             self::$objConnection = new self();
         }
         return self::$objConnection;
     }
+
 }
