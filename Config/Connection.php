@@ -5,7 +5,7 @@
  * TODO: Clase para conectarse a la base de datos.
  * NOTA: Nadie podrá heredar esta clase
  */
-final class connection
+final class Connection
 {
     // Atributos para hacer la conexión
     private static $userDatabase = "root";
@@ -40,7 +40,7 @@ final class connection
      *
      * @return PDO
      */
-    final public static function connectDatabase(): PDO
+    public static function connectDatabase(): PDO
     {
         // Preguntamos si el objetoPDO si es null
         if (self::$objPDO === null) {
@@ -56,7 +56,7 @@ final class connection
      *
      * @return connection
      */
-    final public static function instanceObject(): connection
+    public static function instanceObject(): connection
     {
         if (self::$objConnection == null) {
             self::$objConnection = new self();
