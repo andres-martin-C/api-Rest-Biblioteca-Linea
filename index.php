@@ -4,10 +4,10 @@
 // require_once 'Model/User.php';
 // // Obtener la instancia de la conexión
 // try {
-//     $model = User::get_all_User();
+//     $model = User::get_filtret_User(1,'nombre');
 //     var_dump($model);
 // } catch (PDOException $th) {
-//     //throw $th;
+//     echo "Error en la conexión o consulta: " . $th->getMessage();
 // }
 
 
