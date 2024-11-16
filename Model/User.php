@@ -24,13 +24,13 @@ class User
      *
      * @return array
      */
-    public static function get_all_User($page = 1) : array
+    public static function get_all_User($page = 1): array
     {
         // Obtenemos el objeto PDO
         $objPDO = Connection::instanceObject()->connectDatabase();
         // Validamos que el query sea correcto syntax.
         // Agregamos las columnas dinámicamente.
-        $stament = $objPDO->prepare('SELECT '. implode(', ', self::$columnas) . ' FROM user WHERE id BETWEEN ? AND ? ');
+        $stament = $objPDO->prepare('SELECT ' . implode(', ', self::$columnas) . ' FROM user WHERE id BETWEEN ? AND ? ');
         // Agregamos los valores en la posición correcta o sea en el carácter '?'
         $stament->bindValue(1, $page, PDO::PARAM_INT);
         $stament->bindValue(2, $page * 10, PDO::PARAM_INT);
@@ -46,13 +46,13 @@ class User
      * @param [type] $id
      * @return array
      */
-    public static function get_one_User($id) : array
+    public static function get_one_User($id): array
     {
         // Obtenemos el objeto PDO
         $objPDO = Connection::instanceObject()->connectDatabase();
         // Validamos que el query sea correcto syntax.
         // Agregamos las columnas dinámicamente.
-        $stament = $objPDO->prepare('SELECT '. implode(', ', self::$columnas) . ' FROM user WHERE id = ?');
+        $stament = $objPDO->prepare('SELECT ' . implode(', ', self::$columnas) . ' FROM user WHERE id = ?');
         // Sustituimos el valor en la posición correcta o sea en el carácter '?'
         $stament->bindValue(1, $id, PDO::PARAM_INT);
         // Mandamos a ejecutar el query.
@@ -76,13 +76,13 @@ class User
      * @param [type] $endFilter
      * @return array
      */
-    public static function get_filtret_User($pageFilter , $columnFiltrer) : array
+    public static function get_filtret_User($pageFilter, $columnFiltrer): array
     {
         // Obtenemos el objeto PDO
         $objPDO = Connection::instanceObject()->connectDatabase();
         // Validamos que el query sea correcto syntax.
         // Agregamos las columnas dinámicamente.
-        $stament = $objPDO->prepare('SELECT '. implode(', ', self::$columnas) . ' FROM user WHERE id BETWEEN ? AND ? ORDER BY ? ASC');
+        $stament = $objPDO->prepare('SELECT ' . implode(', ', self::$columnas) . ' FROM user WHERE id BETWEEN ? AND ? ORDER BY ? ASC');
         // Agregamos los valores en la posición correcta o sea en el carácter '?'
         $stament->bindValue(1, $pageFilter, PDO::PARAM_INT);
         $stament->bindValue(2, $pageFilter * 10, PDO::PARAM_INT);
@@ -91,5 +91,45 @@ class User
         $stament->execute();
         // Retornamos los valores
         return $stament->fetchAll();;
+    }
+
+    /**
+     * TODO: Método para eliminar un user.
+     *
+     * @param [type] $id
+     * @return bool
+     */
+    public static function delete_user($id): bool
+    {
+        // Obtenemos el objeto PDO
+        $objPDO = Connection::instanceObject()->connectDatabase();
+        // Validamos que el query sea correcto syntax.
+        // Agregamos las columnas dinámicamente.
+        $stament = $objPDO->prepare('DELETE FROM user WHERE id = ?');
+        // Agregamos los valores en la posición correcta o sea en el carácter '?'
+        $stament->bindValue(1, $id, PDO::PARAM_INT);
+        // Mandamos a ejecutar el query.
+        return $stament->execute();
+    }
+
+    /**
+     * TODO: Método para eliminar varios usuarios.
+     *
+     * @param [type] $startId
+     * @param [type] $finishId
+     * @return bool
+     */
+    public static function deleteFiltrer($startId, $finishId): bool
+    {
+        // Obtenemos el objeto PDO
+        $objPDO = Connection::instanceObject()->connectDatabase();
+        // Validamos que el query sea correcto syntax.
+        // Agregamos las columnas dinámicamente.
+        $stament = $objPDO->prepare('DELETE FROM user WHERE id >= ? AND id <= ?');
+        // Agregamos los valores en la posición correcta o sea en el carácter '?'
+        $stament->bindValue(1, $startId, PDO::PARAM_INT);
+        $stament->bindValue(1, $finishId, PDO::PARAM_INT);
+        // Mandamos a ejecutar el query.
+        return $stament->execute();
     }
 }
