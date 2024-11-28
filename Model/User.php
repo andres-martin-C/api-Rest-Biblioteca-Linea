@@ -132,4 +132,10 @@ class User
         // Mandamos a ejecutar el query.
         return $stament->execute();
     }
+
+    // * Validacion para usuarios.
+    public static function validacion(){
+        // Obtenemos el objeto PDO
+        $objPDO = Connection::instanceObject()->connectDatabase();
+    }
 }
