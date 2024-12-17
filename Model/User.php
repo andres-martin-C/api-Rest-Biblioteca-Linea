@@ -132,4 +132,28 @@ class User
         // Mandamos a ejecutar el query.
         return $stament->execute();
     }
+
+    /**
+     * TODO: Método para modificar un usuario
+     *
+     * @param [type] $array
+     * @return void
+     */
+    public static function updateUser($array) { 
+        // Obtenemos el objeto PDO
+        $objPDO = Connection::instanceObject()->connectDatabase();
+        // Validamos que el query sea correcto syntax.
+        // Agregamos las columnas dinámicamente.
+        $stament = $objPDO->prepare('UPDATE user SET ' . self::$columnas[1] . ' = ?, ' . self::$columnas[2] . ' = ?, ' . self::$columnas[3] . ' = ?, ' . 
+        self::$columnas[4] . ' = ?, ' . self::$columnas[5] . ' = ?, ' . self::$columnas[8] . ' = ? WHERE id = ?');
+        $stament->bindValue(1, $array[1], PDO::PARAM_STR);
+        $stament->bindValue(2, $array[2], PDO::PARAM_STR);
+        $stament->bindValue(3, $array[3], PDO::PARAM_STR);
+        $stament->bindValue(4, $array[4], PDO::PARAM_STR);
+        $stament->bindValue(5, $array[5], PDO::PARAM_STR);
+        $stament->bindValue(6, $array[6], PDO::PARAM_STR);
+        $stament->bindValue(7, $array[0], PDO::PARAM_INT);
+        // Mandamos a ejecutar el query.
+        return $stament->execute();
+    }
 }
