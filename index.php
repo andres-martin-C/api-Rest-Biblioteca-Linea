@@ -41,14 +41,17 @@ use Firebase\JWT\Key;
 
 // Importamos la clase connection
 
-// require_once 'Model/User.php';
+require_once 'Model/User.php';
+// echo password_hash("1234",PASSWORD_BCRYPT);
+// echo '<br>';
+// echo password_hash("1234",PASSWORD_BCRYPT);
 // // Obtener la instancia de la conexión
-// try {
-//     $model = User::insertUser(['Andres','lol','game','andres@gamil.com','1234','token','2024-12-28 14:30:00','user']);
+try {
+    $model = User::insertUser(['Andres','lol','game','andres@gamil.com','1234','user']);
     
-// } catch (PDOException $th) {
-//     echo "Error en la conexión o consulta: " . $th->getMessage();
-// }
+} catch (PDOException $th) {
+    echo "Error en la conexión o consulta: " . $th->getMessage();
+}
 
 
 
