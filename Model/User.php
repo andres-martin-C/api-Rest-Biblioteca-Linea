@@ -92,29 +92,38 @@ class User
     }
 
 
-
-    public static function insertUser(array $array) {
-        // Mandar a encriptar password
-        $passwordEncriptada = self::encriptar($array[4]);
+    /**
+     * TODO: Crear un nuevo dato de usuario.
+     *
+     * @param array $valoresEnviadosPeticion
+     * @return boolean
+     */
+    public static function insertUser(array $valoresEnviadosPeticion): bool
+    {
         // Obtenemos el objeto PDO
         $objPDO = Connection::instanceObject()->connectDatabase();
+        // Mandar a validar si existe el correo electronico
+        if (self::existeEmail($valoresEnviadosPeticion[3], $objPDO)) {
+            throw new Exception("Existe el correo", 1);
+        }
+        // Mandar a encriptar password
+        $passwordEncriptada = self::encriptar($valoresEnviadosPeticion[4]);
         // Validamos que el query sea correcto syntax.
         // Agregamos las columnas dinámicamente.
-        $stament = $objPDO->prepare('INSERT INTO user (' . self::$columnas[1] . ' , ' . self::$columnas[2] . ' , ' . 
-        self::$columnas[3] . ' , ' . self::$columnas[4] . ' , ' . self::$columnas[5] . ' , ' . self::$columnas[6] . ') VALUES ( ?, ?, ?, ?, ?, ?)');
-        $stament->bindValue(1, $array[0], PDO::PARAM_STR);
-        $stament->bindValue(2, $array[1], PDO::PARAM_STR);
-        $stament->bindValue(3, $array[2], PDO::PARAM_STR);
-        $stament->bindValue(4, $array[3], PDO::PARAM_STR);
+        $stament = $objPDO->prepare('INSERT INTO user (' . self::$columnas[1] . ' , ' . self::$columnas[2] . ' , ' .
+            self::$columnas[3] . ' , ' . self::$columnas[4] . ' , ' . self::$columnas[5] . ' , ' . self::$columnas[6] . ') VALUES ( ?, ?, ?, ?, ?, ?)');
+        $stament->bindValue(1, $valoresEnviadosPeticion[0], PDO::PARAM_STR);
+        $stament->bindValue(2, $valoresEnviadosPeticion[1], PDO::PARAM_STR);
+        $stament->bindValue(3, $valoresEnviadosPeticion[2], PDO::PARAM_STR);
+        $stament->bindValue(4, $valoresEnviadosPeticion[3], PDO::PARAM_STR);
         $stament->bindValue(5, $passwordEncriptada, PDO::PARAM_STR);
-        $stament->bindValue(6, $array[5], PDO::PARAM_STR);
+        $stament->bindValue(6, $valoresEnviadosPeticion[5], PDO::PARAM_STR);
 
         if ($stament->execute()) {
             return true;
         } else {
             throw new Exception("Error Processing Request", 1);
         }
-        
     }
 
     /**
@@ -123,9 +132,29 @@ class User
      * @param string $passwordNoEncriptada
      * @return string
      */
-    private static function encriptar(string $passwordNoEncriptada): string{
+    private static function encriptar(string $passwordNoEncriptada): string
+    {
         // * Retornamos el password encriptado
         return password_hash($passwordNoEncriptada, PASSWORD_BCRYPT);
+    }
+
+    /**
+     * TODO: Validar si existe ya ese correo en la base de datos.
+     *
+     * @param string $emailValidar
+     * @return boolean
+     */
+    private static function existeEmail(string $emailValidar, $objPDO): bool
+    {
+        // Validamos que el query sea correcto syntax.
+        // Agregamos las columnas dinámicamente.
+        $stament = $objPDO->prepare('SELECT * FROM user WHERE ' . self::$columnas[4] . ' = ?');
+        // Agregamos los valores en la posición correcta o sea en el carácter '?'
+        $stament->bindValue(1, $emailValidar, PDO::PARAM_STR);
+        // Mandamos a ejecutar el query.
+        $stament->execute();
+        // retornamos el resultado
+        return $stament->rowCount() > 0;
     }
 
     /**
@@ -171,23 +200,24 @@ class User
     /**
      * TODO: Método para modificar un usuario
      *
-     * @param [type] $array
+     * @param [type] $valoresEnviadosPeticion
      * @return void
      */
-    public static function updateUser($array) { 
+    public static function updateUser($valoresEnviadosPeticion)
+    {
         // Obtenemos el objeto PDO
         $objPDO = Connection::instanceObject()->connectDatabase();
         // Validamos que el query sea correcto syntax.
         // Agregamos las columnas dinámicamente.
-        $stament = $objPDO->prepare('UPDATE user SET ' . self::$columnas[1] . ' = ?, ' . self::$columnas[2] . ' = ?, ' . self::$columnas[3] . ' = ?, ' . 
-        self::$columnas[4] . ' = ?, ' . self::$columnas[5] . ' = ?, ' . self::$columnas[8] . ' = ? WHERE id = ?');
-        $stament->bindValue(1, $array[1], PDO::PARAM_STR);
-        $stament->bindValue(2, $array[2], PDO::PARAM_STR);
-        $stament->bindValue(3, $array[3], PDO::PARAM_STR);
-        $stament->bindValue(4, $array[4], PDO::PARAM_STR);
-        $stament->bindValue(5, $array[5], PDO::PARAM_STR);
-        $stament->bindValue(6, $array[6], PDO::PARAM_STR);
-        $stament->bindValue(7, $array[0], PDO::PARAM_INT);
+        $stament = $objPDO->prepare('UPDATE user SET ' . self::$columnas[1] . ' = ?, ' . self::$columnas[2] . ' = ?, ' . self::$columnas[3] . ' = ?, ' .
+            self::$columnas[4] . ' = ?, ' . self::$columnas[5] . ' = ?, ' . self::$columnas[8] . ' = ? WHERE id = ?');
+        $stament->bindValue(1, $valoresEnviadosPeticion[1], PDO::PARAM_STR);
+        $stament->bindValue(2, $valoresEnviadosPeticion[2], PDO::PARAM_STR);
+        $stament->bindValue(3, $valoresEnviadosPeticion[3], PDO::PARAM_STR);
+        $stament->bindValue(4, $valoresEnviadosPeticion[4], PDO::PARAM_STR);
+        $stament->bindValue(5, $valoresEnviadosPeticion[5], PDO::PARAM_STR);
+        $stament->bindValue(6, $valoresEnviadosPeticion[6], PDO::PARAM_STR);
+        $stament->bindValue(7, $valoresEnviadosPeticion[0], PDO::PARAM_INT);
         // Mandamos a ejecutar el query.
         return $stament->execute();
     }
