@@ -93,6 +93,23 @@ class User
         return $stament->fetchAll();;
     }
 
+
+    public static function insertUser($array) {
+        // Obtenemos el objeto PDO
+        $objPDO = Connection::instanceObject()->connectDatabase();
+        // Validamos que el query sea correcto syntax.
+        // Agregamos las columnas dinámicamente.
+        $stament = $objPDO->prepare('INSERT INTO user (' . self::$columnas[1] . ' , ' . self::$columnas[2] . ' , ' . 
+        self::$columnas[3] . ' , ' . self::$columnas[4] . ' , ' . self::$columnas[5] . ' , ' . self::$columnas[6] . ' , ' . self::$columnas[7] . ' , ' . ') VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?');
+        $stament->bindValue(1, $array[0], PDO::PARAM_INT);
+        $stament->bindValue(2, $array[1], PDO::PARAM_STR);
+        $stament->bindValue(3, $array[2], PDO::PARAM_STR);
+        $stament->bindValue(4, $array[3], PDO::PARAM_STR);
+        $stament->bindValue(5, $array[4], PDO::PARAM_STR);
+        $stament->bindValue(6, $array[5], PDO::PARAM_STR);
+        $stament->bindValue(7, $array[6], PDO::PARAM_STR);
+    }
+
     /**
      * TODO: Método para eliminar un user.
      *

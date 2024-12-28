@@ -57,8 +57,6 @@ CREATE TABLE IF NOT EXISTS `user` (
   `apellido_Materno` VARCHAR(255) NOT NULL,  -- Cambié bigint por varchar
   `correo` VARCHAR(255) NOT NULL UNIQUE,  -- Añadí UNIQUE para evitar duplicados
   `password` VARCHAR(255) NOT NULL,
-  `token` VARCHAR(255) NOT NULL,
-  `tokenActivado` DATETIME NOT NULL,
   `rol` ENUM('admin', 'user', 'moderator') NOT NULL  -- Definí los valores del enum
 );
 
