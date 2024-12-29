@@ -165,15 +165,19 @@ class User
      */
     public static function delete_user($id): bool
     {
-        // Obtenemos el objeto PDO
-        $objPDO = Connection::instanceObject()->connectDatabase();
-        // Validamos que el query sea correcto syntax.
-        // Agregamos las columnas dinámicamente.
-        $stament = $objPDO->prepare('DELETE FROM user WHERE id = ?');
-        // Agregamos los valores en la posición correcta o sea en el carácter '?'
-        $stament->bindValue(1, $id, PDO::PARAM_INT);
-        // Mandamos a ejecutar el query.
-        return $stament->execute();
+        try {
+            // Obtenemos el objeto PDO
+            $objPDO = Connection::instanceObject()->connectDatabase();
+            // Validamos que el query sea correcto syntax.
+            // Agregamos las columnas dinámicamente.
+            $stament = $objPDO->prepare('DELETE FROM user WHERE id = ?');
+            // Agregamos los valores en la posición correcta o sea en el carácter '?'
+            $stament->bindValue(1, $id, PDO::PARAM_INT);
+            // Mandamos a ejecutar el query.
+            return $stament->execute();
+        } catch (PDOException $error) {
+            throw new Exception("No se pudo eliminar error DATABASE", 1);
+        }
     }
 
     /**
