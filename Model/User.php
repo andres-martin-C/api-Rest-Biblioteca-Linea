@@ -46,24 +46,28 @@ class User
      */
     public static function get_one_User($id): array
     {
-        // Obtenemos el objeto PDO
-        $objPDO = Connection::instanceObject()->connectDatabase();
-        // Validamos que el query sea correcto syntax.
-        // Agregamos las columnas dinámicamente.
-        $stament = $objPDO->prepare('SELECT ' . implode(', ', self::$columnas) . ' FROM user WHERE id = ?');
-        // Sustituimos el valor en la posición correcta o sea en el carácter '?'
-        $stament->bindValue(1, $id, PDO::PARAM_INT);
-        // Mandamos a ejecutar el query.
-        $stament->execute();
-        // Almaceno la respuesta si no encuentra nada entonces retornar un boolean.
-        $valor = $stament->fetch(PDO::FETCH_ASSOC);
-        // Si el valor es false entonces entrara aquí.
-        if ($valor) {
-            // Retornara un array.
-            return [];
+        try {
+            // Obtenemos el objeto PDO
+            $objPDO = Connection::instanceObject()->connectDatabase();
+            // Validamos que el query sea correcto syntax.
+            // Agregamos las columnas dinámicamente.
+            $stament = $objPDO->prepare('SELECT ' . implode(', ', self::$columnas) . ' FROM user WHERE id = ?');
+            // Sustituimos el valor en la posición correcta o sea en el carácter '?'
+            $stament->bindValue(1, $id, PDO::PARAM_INT);
+            // Mandamos a ejecutar el query.
+            $stament->execute();
+            // Almaceno la respuesta si no encuentra nada entonces retornar un boolean.
+            $valor = $stament->fetch(PDO::FETCH_ASSOC);
+            // Si el valor es false entonces entrara aquí.
+            if ($valor) {
+                // Retornara un array.
+                return [];
+            }
+            // Retornamos la respuesta.
+            return $valor;
+        } catch (PDOException $error) {
+            throw new Exception("Error get one user", 1);
         }
-        // Retornamos la respuesta.
-        return $valor;
     }
 
     /**
