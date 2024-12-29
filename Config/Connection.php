@@ -1,4 +1,7 @@
 <?php
+namespace Config;
+
+use PDO,PDOException;
 
 /**
  * 

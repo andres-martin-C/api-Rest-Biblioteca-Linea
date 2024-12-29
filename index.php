@@ -3,6 +3,7 @@ require 'vendor/autoload.php';
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Model\User;
 
 
 // TODO: Capturar en autorization de los HEADER

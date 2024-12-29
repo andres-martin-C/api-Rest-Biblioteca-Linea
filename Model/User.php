@@ -1,6 +1,9 @@
 <?php
-// Incluimos el archivo connection.
-require_once 'Config/Connection.php';
+namespace Model;
+
+use Config\Connection;
+use PDO;
+use Exception,PDOException;
 
 class User
 {
