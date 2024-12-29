@@ -100,29 +100,28 @@ class User
      */
     public static function insertUser(array $valoresEnviadosPeticion): bool
     {
-        // Obtenemos el objeto PDO
-        $objPDO = Connection::instanceObject()->connectDatabase();
-        // Mandar a validar si existe el correo electronico
-        if (self::existeEmail($valoresEnviadosPeticion[3], $objPDO)) {
-            throw new Exception("Existe el correo", 1);
-        }
-        // Mandar a encriptar password
-        $passwordEncriptada = self::encriptar($valoresEnviadosPeticion[4]);
-        // Validamos que el query sea correcto syntax.
-        // Agregamos las columnas dinámicamente.
-        $stament = $objPDO->prepare('INSERT INTO user (' . self::$columnas[1] . ' , ' . self::$columnas[2] . ' , ' .
-            self::$columnas[3] . ' , ' . self::$columnas[4] . ' , ' . self::$columnas[5] . ' , ' . self::$columnas[6] . ') VALUES ( ?, ?, ?, ?, ?, ?)');
-        $stament->bindValue(1, $valoresEnviadosPeticion[0], PDO::PARAM_STR);
-        $stament->bindValue(2, $valoresEnviadosPeticion[1], PDO::PARAM_STR);
-        $stament->bindValue(3, $valoresEnviadosPeticion[2], PDO::PARAM_STR);
-        $stament->bindValue(4, $valoresEnviadosPeticion[3], PDO::PARAM_STR);
-        $stament->bindValue(5, $passwordEncriptada, PDO::PARAM_STR);
-        $stament->bindValue(6, $valoresEnviadosPeticion[5], PDO::PARAM_STR);
-
-        if ($stament->execute()) {
-            return true;
-        } else {
-            throw new Exception("Error Processing Request", 1);
+        try {
+            // Obtenemos el objeto PDO
+            $objPDO = Connection::instanceObject()->connectDatabase();
+            // Mandar a validar si existe el correo electronico
+            if (self::existeEmail($valoresEnviadosPeticion[3], $objPDO)) {
+                throw new Exception("Existe el correo", 1);
+            }
+            // Mandar a encriptar password
+            $passwordEncriptada = self::encriptar($valoresEnviadosPeticion[4]);
+            // Validamos que el query sea correcto syntax.
+            // Agregamos las columnas dinámicamente.
+            $stament = $objPDO->prepare('INSERT INTO user (' . self::$columnas[1] . ' , ' . self::$columnas[2] . ' , ' .
+                self::$columnas[3] . ' , ' . self::$columnas[4] . ' , ' . self::$columnas[5] . ' , ' . self::$columnas[6] . ') VALUES ( ?, ?, ?, ?, ?, ?)');
+            $stament->bindValue(1, $valoresEnviadosPeticion[0], PDO::PARAM_STR);
+            $stament->bindValue(2, $valoresEnviadosPeticion[1], PDO::PARAM_STR);
+            $stament->bindValue(3, $valoresEnviadosPeticion[2], PDO::PARAM_STR);
+            $stament->bindValue(4, $valoresEnviadosPeticion[3], PDO::PARAM_STR);
+            $stament->bindValue(5, $passwordEncriptada, PDO::PARAM_STR);
+            $stament->bindValue(6, $valoresEnviadosPeticion[5], PDO::PARAM_STR);
+            return $stament->execute();
+        } catch (PDOException $error) {
+            throw new Exception("Error al insertar un usuario", 1);
         }
     }
 
