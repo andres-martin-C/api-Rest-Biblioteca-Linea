@@ -47,7 +47,7 @@ require_once 'Model/User.php';
 // echo password_hash("1234",PASSWORD_BCRYPT);
 // // Obtener la instancia de la conexión
 try {
-    $model = User::insertUser(['Andres','lol','game','andres1@gamil.com','1234','user']);
+    $model = User::updateUser(['','Andres','lol','game','andres@gamil.com','1234','user']);
     
 } catch (PDOException $th) {
     echo "Error en la conexión o consulta: " . $th->getMessage();

@@ -201,24 +201,32 @@ class User
      * TODO: Método para modificar un usuario
      *
      * @param [type] $valoresEnviadosPeticion
-     * @return void
+     * @return boolean
      */
-    public static function updateUser($valoresEnviadosPeticion)
+    public static function updateUser($valoresEnviadosPeticion): bool
     {
-        // Obtenemos el objeto PDO
-        $objPDO = Connection::instanceObject()->connectDatabase();
-        // Validamos que el query sea correcto syntax.
-        // Agregamos las columnas dinámicamente.
-        $stament = $objPDO->prepare('UPDATE user SET ' . self::$columnas[1] . ' = ?, ' . self::$columnas[2] . ' = ?, ' . self::$columnas[3] . ' = ?, ' .
-            self::$columnas[4] . ' = ?, ' . self::$columnas[5] . ' = ?, ' . self::$columnas[8] . ' = ? WHERE id = ?');
-        $stament->bindValue(1, $valoresEnviadosPeticion[1], PDO::PARAM_STR);
-        $stament->bindValue(2, $valoresEnviadosPeticion[2], PDO::PARAM_STR);
-        $stament->bindValue(3, $valoresEnviadosPeticion[3], PDO::PARAM_STR);
-        $stament->bindValue(4, $valoresEnviadosPeticion[4], PDO::PARAM_STR);
-        $stament->bindValue(5, $valoresEnviadosPeticion[5], PDO::PARAM_STR);
-        $stament->bindValue(6, $valoresEnviadosPeticion[6], PDO::PARAM_STR);
-        $stament->bindValue(7, $valoresEnviadosPeticion[0], PDO::PARAM_INT);
-        // Mandamos a ejecutar el query.
-        return $stament->execute();
+        try {
+            // Obtenemos el objeto PDO
+            $objPDO = Connection::instanceObject()->connectDatabase();
+            // Mandar a validar si existe el correo electronico
+            if (self::existeEmail($valoresEnviadosPeticion[4], $objPDO)) {
+                throw new Exception("Ya existe el correo", 1);
+            }
+            // Validamos que el query sea correcto syntax.
+            // Agregamos las columnas dinámicamente.
+            $stament = $objPDO->prepare('UPDATE user SET ' . self::$columnas[1] . ' = ?, ' . self::$columnas[2] . ' = ?, ' . self::$columnas[3] . ' = ?, ' .
+                self::$columnas[4] . ' = ?, ' . self::$columnas[5] . ' = ?, ' . self::$columnas[6] . ' = ? WHERE id = ?');
+            $stament->bindValue(1, $valoresEnviadosPeticion[1], PDO::PARAM_STR);
+            $stament->bindValue(2, $valoresEnviadosPeticion[2], PDO::PARAM_STR);
+            $stament->bindValue(3, $valoresEnviadosPeticion[3], PDO::PARAM_STR);
+            $stament->bindValue(4, $valoresEnviadosPeticion[4], PDO::PARAM_STR);
+            $stament->bindValue(5, $valoresEnviadosPeticion[5], PDO::PARAM_STR);
+            $stament->bindValue(6, $valoresEnviadosPeticion[6], PDO::PARAM_STR);
+            $stament->bindValue(7, $valoresEnviadosPeticion[0], PDO::PARAM_INT);
+            // Mandamos a ejecutar el query.
+            return $stament->execute();
+        } catch (PDOException $error) {
+            throw new Exception("No se pudo actualizar error DATABASE", 1);
+        }
     }
 }
