@@ -76,19 +76,23 @@ class User
      */
     public static function get_filtret_User($pageFilter, $columnFiltrer): array
     {
-        // Obtenemos el objeto PDO
-        $objPDO = Connection::instanceObject()->connectDatabase();
-        // Validamos que el query sea correcto syntax.
-        // Agregamos las columnas dinámicamente.
-        $stament = $objPDO->prepare('SELECT ' . implode(', ', self::$columnas) . ' FROM user WHERE id BETWEEN ? AND ? ORDER BY ? ASC');
-        // Agregamos los valores en la posición correcta o sea en el carácter '?'
-        $stament->bindValue(1, $pageFilter, PDO::PARAM_INT);
-        $stament->bindValue(2, $pageFilter * 10, PDO::PARAM_INT);
-        $stament->bindValue(3, $columnFiltrer, PDO::PARAM_STR);
-        // Mandamos a ejecutar el query.
-        $stament->execute();
-        // Retornamos los valores
-        return $stament->fetchAll();;
+        try {
+            // Obtenemos el objeto PDO
+            $objPDO = Connection::instanceObject()->connectDatabase();
+            // Validamos que el query sea correcto syntax.
+            // Agregamos las columnas dinámicamente.
+            $stament = $objPDO->prepare('SELECT ' . implode(', ', self::$columnas) . ' FROM user WHERE id BETWEEN ? AND ? ORDER BY ? ASC');
+            // Agregamos los valores en la posición correcta o sea en el carácter '?'
+            $stament->bindValue(1, $pageFilter, PDO::PARAM_INT);
+            $stament->bindValue(2, $pageFilter * 10, PDO::PARAM_INT);
+            $stament->bindValue(3, $columnFiltrer, PDO::PARAM_STR);
+            // Mandamos a ejecutar el query.
+            $stament->execute();
+            // Retornamos los valores
+            return $stament->fetchAll();
+        } catch (PDOException $error) {
+            throw new Exception("Error consulta filtret", 1);
+        }
     }
 
 
