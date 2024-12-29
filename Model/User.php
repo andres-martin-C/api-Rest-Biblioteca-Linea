@@ -20,22 +20,27 @@ class User
      * TODO: Método que retornara un filtrado de 10 máximo de usuarios por pagina.
      * Para que la petición a la base de datos no le afecte el rendimiento.
      *
+     * @param integer $page
      * @return array
      */
     public static function get_all_User($page = 1): array
     {
-        // Obtenemos el objeto PDO
-        $objPDO = Connection::instanceObject()->connectDatabase();
-        // Validamos que el query sea correcto syntax.
-        // Agregamos las columnas dinámicamente.
-        $stament = $objPDO->prepare('SELECT ' . implode(', ', self::$columnas) . ' FROM user WHERE id BETWEEN ? AND ? ');
-        // Agregamos los valores en la posición correcta o sea en el carácter '?'
-        $stament->bindValue(1, $page, PDO::PARAM_INT);
-        $stament->bindValue(2, $page * 10, PDO::PARAM_INT);
-        // Mandamos a ejecutar el query.
-        $stament->execute();
-        // Retornamos la respuesta.
-        return $stament->fetchAll();
+        try {
+            // Obtenemos el objeto PDO
+            $objPDO = Connection::instanceObject()->connectDatabase();
+            // Validamos que el query sea correcto syntax.
+            // Agregamos las columnas dinámicamente.
+            $stament = $objPDO->prepare('SELECT ' . implode(', ', self::$columnas) . ' FROM user WHERE id BETWEEN ? AND ? ');
+            // Agregamos los valores en la posición correcta o sea en el carácter '?'
+            $stament->bindValue(1, $page, PDO::PARAM_INT);
+            $stament->bindValue(2, $page * 10, PDO::PARAM_INT);
+            // Mandamos a ejecutar el query.
+            $stament->execute();
+            // Retornamos la respuesta.
+            return $stament->fetchAll();
+        } catch (\Throwable $th) {
+            throw new Exception("Error get all user", 1);
+        }
     }
 
     /**
