@@ -11,10 +11,10 @@ use PDO,PDOException;
 final class Connection
 {
     // Atributos para hacer la conexión
-    private static $userDatabase = "root";
-    private static $passwordUserDataBase = "";
-    private static $serverName = "localhost";
-    private static $nameDataBase = "prueba";
+    private static $userDatabase;
+    private static $passwordUserDataBase;
+    private static $serverName;
+    private static $nameDataBase;
     private static $url;
     // Instancia de la misma clase actual.
     private static $objConnection = null;
@@ -28,6 +28,10 @@ final class Connection
     {
         // Bloque try-catch
         try {
+            self::$userDatabase=$_ENV['DATABASE_SER'];
+            self::$passwordUserDataBase=$_ENV['DATABASE_PASSWORD'];
+            self::$serverName=$_ENV['DATABASE_SERVERNAME'];
+            self::$nameDataBase=$_ENV['DATABASE_NAME'];
             // Me regresa un objeto de la clase PDO para que yo pueda hacer las operaciones CRUD
             self::$objPDO = self::connectDatabase();
             // Captura el error por si hay un problema.

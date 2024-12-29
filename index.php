@@ -4,6 +4,10 @@ require 'vendor/autoload.php';
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 use Model\User;
+use Dotenv\Dotenv;
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
 
 
 // TODO: Capturar en autorization de los HEADER
@@ -48,8 +52,7 @@ require_once 'Model/User.php';
 // echo password_hash("1234",PASSWORD_BCRYPT);
 // // Obtener la instancia de la conexión
 try {
-    $model = User::updateUser(['','Andres','lol','game','andres@gamil.com','1234','user']);
-    
+    $model = User::updateUser([18,'Andres','lol','game','andres@gamil.com','1234','user']);
 } catch (PDOException $th) {
     echo "Error en la conexión o consulta: " . $th->getMessage();
 }
