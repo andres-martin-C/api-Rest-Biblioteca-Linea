@@ -120,6 +120,7 @@ class User
     public static function insertUser(array $valoresEnviadosPeticion): string
     {
         try {
+            self::validarParametros($valoresEnviadosPeticion);
             // Obtenemos el objeto PDO
             $objPDO = Connection::instanceObject()->connectDatabase();
             // Mandar a validar si existe el correo electronico
@@ -244,9 +245,10 @@ class User
      * @param [type] $valoresEnviadosPeticion
      * @return boolean
      */
-    public static function updateUser($valoresEnviadosPeticion): bool
+    public static function updateUser(array $valoresEnviadosPeticion): bool
     {
         try {
+            self::validarParametros($valoresEnviadosPeticion);
             // Obtenemos el objeto PDO
             $objPDO = Connection::instanceObject()->connectDatabase();
             // Mandar a validar si existe el correo electronico
