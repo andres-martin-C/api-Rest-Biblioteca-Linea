@@ -270,4 +270,22 @@ class User
             throw new Exception("No se pudo actualizar error DATABASE", 1);
         }
     }
+
+    /**
+     * TODO: Validar columnas de la tabla que me los hayan enviado
+     *
+     * @param array $params
+     * @return void
+     */
+    public static function validarParametros(array $params){
+        // Verificar si las columnasDeLaTabla las enviaron como parámetros.
+        foreach (self::$columnas as $columna) {
+            // Si no esta definido dentro del arreglo que me enviaron entonces marco el error y lo envió.
+            if (!isset($params->$columna)) {
+                // Paso el arreglo a una cadena
+                $mensajeError = "Las columnas son las siguientes: " . implode(', ', self::$columnas);
+                // throw new ExcepcionApi(400, $mensajeError);
+            }
+        }
+    }
 }
