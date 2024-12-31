@@ -1,9 +1,12 @@
 <?php
+
 namespace Model;
 
 use Config\Connection;
 use PDO;
-use Exception,PDOException;
+use Exception, PDOException;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 
 class User
 {
@@ -112,9 +115,9 @@ class User
      * TODO: Crear un nuevo dato de usuario.
      *
      * @param array $valoresEnviadosPeticion
-     * @return boolean
+     * @return string
      */
-    public static function insertUser(array $valoresEnviadosPeticion): bool
+    public static function insertUser(array $valoresEnviadosPeticion): string
     {
         try {
             // Obtenemos el objeto PDO
@@ -135,10 +138,25 @@ class User
             $stament->bindValue(4, $valoresEnviadosPeticion[3], PDO::PARAM_STR);
             $stament->bindValue(5, $passwordEncriptada, PDO::PARAM_STR);
             $stament->bindValue(6, $valoresEnviadosPeticion[5], PDO::PARAM_STR);
-            return $stament->execute();
+            // Ejecutar el Query.
+            $stament->execute();
+            // llamamos al método generar token.
+            return self::generarToken($objPDO->lastInsertId());
         } catch (PDOException $error) {
             throw new Exception("Error al insertar un usuario", 1);
         }
+    }
+
+    private static function generarToken($id_usuario): string
+    {
+        $now = strtotime("now"); // Fecha actual.
+        $payload = [
+            'exp' => $now + 3600, // Le estoy diciendo que espire en una hora
+            'iat' => $now,
+            'data' => $id_usuario // El id.
+        ];
+        $key = $_ENV['KEY']; // Aquí sera la llave con la cual se crearan los tokens.
+        return JWT::encode($payload, $key, 'HS256');
     }
 
     /**

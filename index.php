@@ -1,8 +1,7 @@
 <?php
 require 'vendor/autoload.php';
 
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
+
 use Model\User;
 use Dotenv\Dotenv;
 
@@ -17,15 +16,12 @@ $dotenv->load();
 // print_r($token);
 
 // PARTE PARA CREAR EL TOKEN.
-// $now = strtotime("now"); // Fecha actual.
-// // // NOTA: No se debe mostrar aqui la llave, si no variables locales.
-//  $key = 'prueba'; // Aqui sera la llave con la cual se crearan los tokens.
-// // $payload = [
-// //     'exp' => $now + 3600, // Le estoy diciendo que espire en una hora
-// //     'data' => '1' // Aqui podria ser el id.
-// // ];
 
-// // $jwt = JWT::encode($payload, $key, 'HS256');
+// // // NOTA: No se debe mostrar aqui la llave, si no variables locales.
+
+
+
+
 // // print_r($jwt);
 
 // // PARTE PARA DECODEAR EL TOKEN
@@ -52,7 +48,8 @@ require_once 'Model/User.php';
 // echo password_hash("1234",PASSWORD_BCRYPT);
 // // Obtener la instancia de la conexión
 try {
-    $model = User::updateUser([18,'Andres','lol','game','andres@gamil.com','1234','user']);
+    $model = User::insertUser(['pRUEBA','lol','game','andres12@gamil.com','1234','user']);
+    print_r($model);
 } catch (PDOException $th) {
     echo "Error en la conexión o consulta: " . $th->getMessage();
 }
