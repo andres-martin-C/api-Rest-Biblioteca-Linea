@@ -51,8 +51,8 @@ try {
     $input = file_get_contents('php://input');
     // Decodificar el contenido si es JSON
     $data = json_decode($input, true);  // 'true' para que sea un array asociativo
-    print_r($data);
-    $model = User::autenticacion($data);
+    // print_r($data);
+    $model = User::get_one_User(19);
     print_r($model);
 } catch (PDOException $th) {
     echo "Error en la conexión o consulta: " . $th->getMessage();
