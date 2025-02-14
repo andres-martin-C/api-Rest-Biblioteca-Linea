@@ -123,10 +123,13 @@ class User
             self::validarParametros($valoresEnviadosPeticion);
             // Obtenemos el objeto PDO
             $objPDO = Connection::instanceObject()->connectDatabase();
-            // Mandar a validar si existe el correo electronico
-            if (self::existeEmail($valoresEnviadosPeticion[3], $objPDO)) {
-                throw new Exception("Existe el correo", 1);
+            // Mandar a validar si existe el correo electrónico
+            $objUser = self::existeEmail($valoresEnviadosPeticion[3], $objPDO)['id'];
+            // Si no existe enviamos no existe el correo electrónico
+            if (!isset($objUser['id']) || $objUser['id'] === 0) {
+                throw new Exception(400, "Correo ya existe");
             }
+
             // Mandar a encriptar password
             $passwordEncriptada = self::encriptar($valoresEnviadosPeticion[4]);
             // Validamos que el query sea correcto syntax.
@@ -173,12 +176,52 @@ class User
     }
 
     /**
+     * TODO: Método que retorna un boolean si la contraseña es correcta.
+     *
+     * @param [type] $contrasenia_ingresada
+     * @param [type] $hash_guardado
+     * @return boolean
+     */
+    private static function descriptar($contrasenia_ingresada, $hash_guardado): bool
+    {
+        return password_verify($contrasenia_ingresada, $hash_guardado);
+    }
+
+    /**
+     * TODO: Método para autenticar
+     *
+     * @param array $params
+     * @return string
+     */
+    public static function autenticacion(array $params): string
+    {
+        // Validar si me enviaron los parámetros contraseña y correo
+        if (!isset($params['correo_electronico']) || !isset($params['contrasenia'])) {
+            throw new Exception(400, "Correo o contraseña no ingresada");
+        }
+        $objPDO = Connection::instanceObject()->connectDatabase();
+
+        $objUser = self::existeEmail($params['correo_electronico'], $objPDO);
+        // Si no existe enviamos no existe el correo electrónico
+        if (!isset($objUser['id']) || $objUser['id'] === 0) {
+            throw new Exception(400, "Correo no existe");
+        }
+        
+        // Validar que sea la contraseña correcta
+        self::descriptar($params['contrasenia'], $objUser['password']);
+
+        // Aquí obtener el token y enviárselo.
+        return self::generarToken($objUser['id']);
+    }
+
+    /**
      * TODO: Validar si existe ya ese correo en la base de datos.
      *
      * @param string $emailValidar
-     * @return boolean
+     * @param [type] $objPDO
+     * @return integer
      */
-    private static function existeEmail(string $emailValidar, $objPDO): bool
+    private static function existeEmail(string $emailValidar, $objPDO): array | bool
     {
         // Validamos que el query sea correcto syntax.
         // Agregamos las columnas dinámicamente.
@@ -187,8 +230,9 @@ class User
         $stament->bindValue(1, $emailValidar, PDO::PARAM_STR);
         // Mandamos a ejecutar el query.
         $stament->execute();
-        // retornamos el resultado
-        return $stament->rowCount() > 0;
+        // Almaceno la respuesta si no encuentra nada entonces retornar un boolean.
+        $valor = $stament->fetch(PDO::FETCH_ASSOC);
+        return $valor;
     }
 
     /**
@@ -252,7 +296,7 @@ class User
             // Obtenemos el objeto PDO
             $objPDO = Connection::instanceObject()->connectDatabase();
             // Mandar a validar si existe el correo electronico
-            if (self::existeEmail($valoresEnviadosPeticion[4], $objPDO)) {
+            if (self::existeEmail($valoresEnviadosPeticion[4], $objPDO) !== 0) {
                 throw new Exception("Ya existe el correo", 1);
             }
             // Validamos que el query sea correcto syntax.
@@ -279,13 +323,15 @@ class User
      * @param array $params
      * @return void
      */
-    public static function validarParametros(array $params){
+    public static function validarParametros(array $params)
+    {
         // Verificar si las columnasDeLaTabla las enviaron como parámetros.
         foreach (self::$columnas as $columna) {
             // Si no esta definido dentro del arreglo que me enviaron entonces marco el error y lo envió.
             if (!isset($params->$columna)) {
                 // Paso el arreglo a una cadena
                 $mensajeError = "Las columnas son las siguientes: " . implode(', ', self::$columnas);
+                // !!! FALTA CAMBIAR ESTO.
                 // throw new ExcepcionApi(400, $mensajeError);
             }
         }
