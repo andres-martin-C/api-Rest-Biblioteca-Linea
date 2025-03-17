@@ -116,16 +116,16 @@ class User
     public static function insertUser(array $valoresEnviadosPeticion): string
     {
         try {
+            // Llamo a método para validar si existen los parámetros 
             self::validarParametros($valoresEnviadosPeticion);
             // Obtenemos el objeto PDO
             $objPDO = Connection::instanceObject()->connectDatabase();
             // Mandar a validar si existe el correo electrónico
-            $objUser = self::existeEmail($valoresEnviadosPeticion[3], $objPDO)['id'];
-            // Si no existe enviamos no existe el correo electrónico
-            if (!isset($objUser['id']) || $objUser['id'] === 0) {
+            $objUser = self::existeEmail($valoresEnviadosPeticion[3], $objPDO);
+            // Si existe la propiedad 'id' en objUser entonces dirá que ya existe
+            if (isset($objUser['id'])) {
                 throw new Exception(400, "Correo ya existe");
             }
-
             // Mandar a encriptar password
             $passwordEncriptada = self::encriptar($valoresEnviadosPeticion[4]);
             // Validamos que el query sea correcto syntax.
@@ -199,7 +199,7 @@ class User
 
         $objUser = self::existeEmail($params['correo_electronico'], $objPDO);
         // Si no existe enviamos no existe el correo electrónico
-        if (!isset($objUser['id']) || $objUser['id'] === 0) {
+        if (!isset($objUser['id'])) {
             throw new Exception(400, "Correo no existe");
         }
         
@@ -215,9 +215,9 @@ class User
      *
      * @param string $emailValidar
      * @param [type] $objPDO
-     * @return integer
+     * @return array
      */
-    private static function existeEmail(string $emailValidar, $objPDO): array | bool
+    private static function existeEmail(string $emailValidar, $objPDO): array
     {
         // Validamos que el query sea correcto syntax.
         // Agregamos las columnas dinámicamente.
@@ -228,7 +228,7 @@ class User
         $stament->execute();
         // Almaceno la respuesta si no encuentra nada entonces retornar un boolean.
         $valor = $stament->fetch(PDO::FETCH_ASSOC);
-        return $valor;
+        return is_array($valor) ? $valor : [];
     }
 
     /**
@@ -292,7 +292,7 @@ class User
             // Obtenemos el objeto PDO
             $objPDO = Connection::instanceObject()->connectDatabase();
             // Mandar a validar si existe el correo electronico
-            if (self::existeEmail($valoresEnviadosPeticion[4], $objPDO) !== 0) {
+            if (isset(self::existeEmail($valoresEnviadosPeticion[4], $objPDO)['id'])) {
                 throw new Exception("Ya existe el correo", 1);
             }
             // Validamos que el query sea correcto syntax.
