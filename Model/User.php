@@ -295,6 +295,8 @@ class User
             if (isset(self::existeEmail($valoresEnviadosPeticion[4], $objPDO)['id'])) {
                 throw new Exception("Ya existe el correo", 1);
             }
+            // * Encriptar la nueva contraseña
+            $passwordEncriptado = self::encriptar($valoresEnviadosPeticion[5]);
             // Validamos que el query sea correcto syntax.
             // Agregamos las columnas dinámicamente.
             $stament = $objPDO->prepare('UPDATE user SET ' . self::$columnas[1] . ' = ?, ' . self::$columnas[2] . ' = ?, ' . self::$columnas[3] . ' = ?, ' .
@@ -303,7 +305,7 @@ class User
             $stament->bindValue(2, $valoresEnviadosPeticion[2], PDO::PARAM_STR);
             $stament->bindValue(3, $valoresEnviadosPeticion[3], PDO::PARAM_STR);
             $stament->bindValue(4, $valoresEnviadosPeticion[4], PDO::PARAM_STR);
-            $stament->bindValue(5, $valoresEnviadosPeticion[5], PDO::PARAM_STR);
+            $stament->bindValue(5, $passwordEncriptado, PDO::PARAM_STR);
             $stament->bindValue(6, $valoresEnviadosPeticion[6], PDO::PARAM_STR);
             $stament->bindValue(7, $valoresEnviadosPeticion[0], PDO::PARAM_INT);
             // Mandamos a ejecutar el query.
