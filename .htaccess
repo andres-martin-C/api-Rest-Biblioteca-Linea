@@ -1,0 +1,8 @@
+RewriteEngine On
+RewriteBase /api-Rest-Biblioteca-Linea/
+
+# Redirige todas las solicitudes a index.php, excepto si es un archivo o directorio real
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+

@@ -41,6 +41,7 @@ class ComposerStaticInit20fad51902f91e7fd3039e016a6556b5
         ),
         'C' => 
         array (
+            'Controller\\' => 11,
             'Config\\' => 7,
         ),
     );
@@ -77,6 +78,10 @@ class ComposerStaticInit20fad51902f91e7fd3039e016a6556b5
         'Dotenv\\' => 
         array (
             0 => __DIR__ . '/..' . '/vlucas/phpdotenv/src',
+        ),
+        'Controller\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Controller',
         ),
         'Config\\' => 
         array (
