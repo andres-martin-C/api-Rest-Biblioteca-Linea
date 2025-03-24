@@ -1,6 +1,8 @@
 <?php
 namespace Config;
 
+use Exception;
+use Errors\Error;
 use PDO,PDOException;
 
 /**
@@ -36,7 +38,7 @@ final class Connection
             self::$objPDO = self::connectDatabase();
             // Captura el error por si hay un problema.
         } catch (PDOException $eror) {
-            echo 'No hizo la conexión';
+            throw new Exception( Error::$tipoError['noConeccionBD']['mensaje'], Error::$tipoError['noConeccionBD']['code'] );
             exit(1);
         }
     }

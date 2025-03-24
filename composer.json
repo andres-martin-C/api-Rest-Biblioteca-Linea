@@ -8,7 +8,8 @@
             "Model\\": "Model/",
             "Config\\": "Config/",
             "Controller\\": "Controller/",
-            "View\\": "View/"
+            "View\\": "View/",
+            "Errors\\": "Utils/Errors"
         }
     }
 }

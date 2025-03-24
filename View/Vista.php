@@ -12,13 +12,15 @@ class Vista {
         $this->mensaje = $mensaje;
     }
 
-    private function enviarMensaje(string $formatoDeVolucion = 'json'): void {
-        if (true) {
-            # code...
+    public function enviarMensaje(string $formatoDeVolucion = 'json', array $mensaje = [] ): void {
+        http_response_code($mensaje['estado']);
+        header('Content-Type: application/json; charset=utf8');
+        if ($formatoDeVolucion === 'json') {
+            echo json_encode($mensaje, JSON_PRETTY_PRINT);
         } else {
             # code...
         }
-        
+        exit;
     }
 
 }

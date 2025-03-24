@@ -3,12 +3,29 @@ require 'vendor/autoload.php';
 
 use Dotenv\Dotenv;
 use View\Vista;
+use Errors\Error;
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();
 
+// * Formato por default
+$formato = 'json';
 // * Creacion de instancia para retornar respuesta HTTP
 $respuestaHttp = new Vista();
+// * Variable que contendrá los errores.
+/**
+ * TODO: Función que captura los errores.
+ */
+set_exception_handler(function ($expection) use ($respuestaHttp, $formato) {
+    // * Declaración del formato de respuesta
+    $mensaje = array(
+        "mensaje" => $expection->getMessage(),
+        "estado" => ($expection->getCode() === 0) ? 400 : $expection->getCode(),
+    );
+    // * Retornar la respuesta
+    $respuestaHttp->enviarMensaje( $formato , $mensaje);
+});
+
 $formatosPermitidos = ['json', 'xml'];
 // * Me regresa las cabeceras de la petición pero sus keys las convierto en minúsculas
 $headers = array_change_key_case(apache_request_headers());
@@ -17,13 +34,9 @@ $headers = array_change_key_case(apache_request_headers());
 // * De lo contrario, retorno el valor del formato en minúsculas.
 $formato = (!isset($headers['format']) || !in_array(strtolower($headers['format']), $formatosPermitidos)) ?
     (function () {
-        throw new Exception("Se requiere la cabecera format para saber que formato retornar, los permitidos son json y xml", 1);
+        throw new Exception(Error::$tipoError['errorNoFormato']['mensaje'], Error::$tipoError['errorNoFormato']['code']);
     })()
     : strtolower($headers['format']);
-
-// set_exception_handler(function ($expection) use ($respuestaHttp){
-
-// });
 
 // * Rutas permitidas y a que controlador lo reenviara
 $rutasPermitidas = [
@@ -44,19 +57,19 @@ $url = array_filter($url); // Elimina las posiciones vacías del arreglo
 $url = array_values($url); // Reindexa el array o sea los vuelve a numerar desde la posicion 0
 
 // * Si lo que piden el la petición no esta en rutas permitidas entonces tirar error.
-if (!array_key_exists($url[1], $rutasPermitidas)) throw new Exception("Ruta no existe", 1);
+if (!array_key_exists($url[1], $rutasPermitidas)) throw new Exception( Error::$tipoError['rutaNoExiste']['mensaje'], Error::$tipoError['rutaNoExiste']['code'] );
 
 // * Aquí obtenemos la clase y la variable $ClassController se vuelve una clase
 $ClassController = $rutasPermitidas[$url[1]];
 
 // * Pregunto si se ha importado la clase si no tira error.
-if (!class_exists($ClassController)) throw new Exception("Controller no encontrado", 1);
+if (!class_exists($ClassController)) throw new Exception(Error::$tipoError['controllerNoExiste']['mensaje'], Error::$tipoError['controllerNoExiste']['code']);
 
 // * Obtengo el metodo http y lo pongo en minúsculas
 $methodHttp = strtolower($_SERVER['REQUEST_METHOD']);
 
 // * Valido si esta permitido el método que me enviaron en mi arreglo.
-if (!in_array($methodHttp, $metodosHttpPermitidos)) throw new Exception("Método http no permitido", 1);
+if (!in_array($methodHttp, $metodosHttpPermitidos)) throw new Exception( Error::$tipoError['metodoNoPermitodo']['mensaje'], Error::$tipoError['metodoNoPermitodo']['code'] );
 
 // ! Obtener el body json
 // var_dump(file_get_contents('php://input'));
@@ -67,25 +80,3 @@ $ClassController::procesoRealizar($url, $methodHttp);
 
 
 
-
-
-/**
-$className = $rutasPermitidas['user'];
-var_dump($className);
-if () {
-    // Llamamos al método estático
-    var_dump($className);
-    $className::prueba();
-} else {
-    echo "La clase no existe o no se ha cargado correctamente.";
-}
- */
-
-
-// $class = class_exists($rutasPermitidas['user']);
-// $class::prueba();
-// TODO: Capturar en autorization de los HEADER
-// $headers = apache_request_headers();
-// $autorization = $headers["Authorization"];
-// $token = explode(" ", $autorization)[1];
-// print_r($token);

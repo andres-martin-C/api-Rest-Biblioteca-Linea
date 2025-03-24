@@ -39,6 +39,10 @@ class ComposerStaticInit20fad51902f91e7fd3039e016a6556b5
         array (
             'Firebase\\JWT\\' => 13,
         ),
+        'E' => 
+        array (
+            'Errors\\' => 7,
+        ),
         'D' => 
         array (
             'Dotenv\\' => 7,
@@ -82,6 +86,10 @@ class ComposerStaticInit20fad51902f91e7fd3039e016a6556b5
         'Firebase\\JWT\\' => 
         array (
             0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
+        ),
+        'Errors\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/Utils/Errors',
         ),
         'Dotenv\\' => 
         array (
