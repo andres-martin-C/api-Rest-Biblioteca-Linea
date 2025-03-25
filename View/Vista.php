@@ -2,21 +2,25 @@
 
 namespace View;
 
+use BcMath\Number;
+
 class Vista {
 
-    public $estado = '';
+    public $estado = 0;
     public $mensaje = '';
+    public $formatoDeVolucion = 'json';
 
-    public function __construct(string $estado = '500', string $mensaje = 'Error sistema') {
+    public function __construct( string $formatoDeVolucion = 'json' , int $estado = 500, string $mensaje = 'Error sistema') {
+        $this->formatoDeVolucion = $formatoDeVolucion;
         $this->estado = $estado;
         $this->mensaje = $mensaje;
     }
 
-    public function enviarMensaje(string $formatoDeVolucion = 'json', array $mensaje = [] ): void {
-        http_response_code($mensaje['estado']);
+    public function enviarMensaje(): void {
+        http_response_code($this->estado);
         header('Content-Type: application/json; charset=utf8');
-        if ($formatoDeVolucion === 'json') {
-            echo json_encode($mensaje, JSON_PRETTY_PRINT);
+        if ($this->formatoDeVolucion === 'json') {
+            echo json_encode(['Mensaje' => $this->mensaje , 'Status' => $this->estado], JSON_PRETTY_PRINT);
         } else {
             # code...
         }

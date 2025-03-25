@@ -32,6 +32,9 @@ class User
      */
     public static function get_all_User(int $page = 1): array
     {
+        // * Si me envian un valor menor a uno tiro error.
+        if ($page < 1) throw new Exception("Error no se pueden pedir menor a 1", 404);
+        
         try {
             // Obtenemos el objeto PDO
             $objPDO = Connection::instanceObject()->connectDatabase();
@@ -39,7 +42,7 @@ class User
             // Agregamos las columnas dinámicamente.
             $stament = $objPDO->prepare('SELECT ' . implode(', ', self::$columnas) . ' FROM user WHERE id BETWEEN ? AND ? ');
             // Agregamos los valores en la posición correcta o sea en el carácter '?'
-            $stament->bindValue(1, ($page - 1) * 10, PDO::PARAM_INT);
+            $stament->bindValue(1, ($page !== 1) ?  ($page - 1) * 10 : $page - 1, PDO::PARAM_INT);
             $stament->bindValue(2, $page * 10, PDO::PARAM_INT);
             // Mandamos a ejecutar el query.
             $stament->execute();

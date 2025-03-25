@@ -45,6 +45,10 @@ class Error
             'mensaje' => 'Correo ya existe',
             'code' => 404,
         ),
+        'datosFaltantes' => array (
+            'mensaje' => 'Datos faltantes',
+            'code' => 404,
+        ),
 
     );
 }

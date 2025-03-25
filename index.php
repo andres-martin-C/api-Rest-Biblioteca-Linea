@@ -17,13 +17,12 @@ $respuestaHttp = new Vista();
  * TODO: Función que captura los errores.
  */
 set_exception_handler(function ($expection) use ($respuestaHttp, $formato) {
-    // * Declaración del formato de respuesta
-    $mensaje = array(
-        "mensaje" => $expection->getMessage(),
-        "estado" => ($expection->getCode() === 0) ? 400 : $expection->getCode(),
-    );
+    // * Asignacion de valores para el retorno
+    $respuestaHttp->formatoDeVolucion = $formato;
+    $respuestaHttp->mensaje = $expection->getMessage();
+    $respuestaHttp->estado = ($expection->getCode() === 0) ? 400 : $expection->getCode();
     // * Retornar la respuesta
-    $respuestaHttp->enviarMensaje( $formato , $mensaje);
+    $respuestaHttp->enviarMensaje();
 });
 
 $formatosPermitidos = ['json', 'xml'];
@@ -76,7 +75,10 @@ if (!in_array($methodHttp, $metodosHttpPermitidos)) throw new Exception( Error::
 
 
 // TODO: Llamar a un metodo static de la clases para saber que hacer y no tener que crear instancias de la clase del controller.
-$ClassController::procesoRealizar($url, $methodHttp);
+$elValorRetorno = $ClassController::procesoRealizar($url, $methodHttp);
+$respuestaHttp->estado = $elValorRetorno['status'];
+$respuestaHttp->mensaje = $elValorRetorno['mensaje'];
+$respuestaHttp->enviarMensaje();
 
 
 
