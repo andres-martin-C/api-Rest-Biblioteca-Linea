@@ -23,4 +23,8 @@ class Vista {
         exit;
     }
 
+    private static function formatearXml() {
+        
+    }
+
 }

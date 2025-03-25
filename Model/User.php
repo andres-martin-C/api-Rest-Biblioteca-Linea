@@ -3,6 +3,7 @@
 namespace Model;
 
 use Config\Connection;
+use Errors\Error;
 use PDO;
 use Exception, PDOException;
 use Firebase\JWT\JWT;
@@ -44,8 +45,8 @@ class User
             $stament->execute();
             // Retornamos la respuesta.
             return $stament->fetchAll();
-        } catch (\Throwable $th) {
-            throw new Exception("Error get all user", 1);
+        } catch (PDOException $error) {
+            throw new Exception( Error::$tipoError['errorSintaxis']['mensaje'], Error::$tipoError['errorSintaxis']['code'] );
         }
     }
 
@@ -72,7 +73,7 @@ class User
             // Retornamos la respuesta.
             return $valor ?: [];
         } catch (PDOException $error) {
-            throw new Exception("Error get one user", 1);
+            throw new Exception( Error::$tipoError['errorSintaxis']['mensaje'], Error::$tipoError['errorSintaxis']['code'] );
         }
     }
 
@@ -102,7 +103,7 @@ class User
             // Retornamos los valores
             return $stament->fetchAll();
         } catch (PDOException $error) {
-            throw new Exception("Error consulta filtret", 1);
+            throw new Exception( Error::$tipoError['errorSintaxis']['mensaje'], Error::$tipoError['errorSintaxis']['code'] );
         }
     }
 
@@ -124,7 +125,7 @@ class User
             $objUser = self::existeEmail($valoresEnviadosPeticion[3], $objPDO);
             // Si existe la propiedad 'id' en objUser entonces dirá que ya existe
             if (isset($objUser['id'])) {
-                throw new Exception(400, "Correo ya existe");
+                throw new Exception( Error::$tipoError['correoExistente']['mensaje'] , Error::$tipoError['correoExistente']['code'] );
             }
             // Mandar a encriptar password
             $passwordEncriptada = self::encriptar($valoresEnviadosPeticion[4]);
@@ -143,7 +144,7 @@ class User
             // llamamos al método generar token.
             return self::generarToken($objPDO->lastInsertId());
         } catch (PDOException $error) {
-            throw new Exception("Error al insertar un usuario", 1);
+            throw new Exception( Error::$tipoError['errorSintaxis']['mensaje'], Error::$tipoError['errorSintaxis']['code'] );
         }
     }
 
@@ -193,14 +194,14 @@ class User
     {
         // Validar si me enviaron los parámetros contraseña y correo
         if (!isset($params['correo_electronico']) || !isset($params['contrasenia'])) {
-            throw new Exception(400, "Correo o contraseña no ingresada");
+            throw new Exception( Error::$tipoError['passwordYCorreoFaltan']['mensaje'] , Error::$tipoError['passwordYCorreoFaltan']['code'] );
         }
         $objPDO = Connection::instanceObject()->connectDatabase();
 
         $objUser = self::existeEmail($params['correo_electronico'], $objPDO);
         // Si no existe enviamos no existe el correo electrónico
         if (!isset($objUser['id'])) {
-            throw new Exception(400, "Correo no existe");
+            throw new Exception( Error::$tipoError['correoNoExiste']['mensaje'] , Error::$tipoError['correoNoExiste']['code'] );
         }
         
         // Validar que sea la contraseña correcta
@@ -250,7 +251,7 @@ class User
             // Mandamos a ejecutar el query.
             return $stament->execute();
         } catch (PDOException $error) {
-            throw new Exception("No se pudo eliminar error DATABASE", 1);
+            throw new Exception( Error::$tipoError['errorSintaxis']['mensaje'], Error::$tipoError['errorSintaxis']['code'] );
         }
     }
 
@@ -275,7 +276,7 @@ class User
             // Mandamos a ejecutar el query.
             return $stament->execute();
         } catch (PDOException $error) {
-            throw new Exception("No se pudo eliminar error DATABASE", 1);
+            throw new Exception( Error::$tipoError['errorSintaxis']['mensaje'], Error::$tipoError['errorSintaxis']['code'] );
         }
     }
 
@@ -311,7 +312,7 @@ class User
             // Mandamos a ejecutar el query.
             return $stament->execute();
         } catch (PDOException $error) {
-            throw new Exception("No se pudo actualizar error DATABASE", 1);
+            throw new Exception( Error::$tipoError['errorSintaxis']['mensaje'], Error::$tipoError['errorSintaxis']['code'] );
         }
     }
 
@@ -329,8 +330,8 @@ class User
             if (!isset($params->$columna)) {
                 // Paso el arreglo a una cadena
                 $mensajeError = "Las columnas son las siguientes: " . implode(', ', self::$columnas);
-                // !!! FALTA CAMBIAR ESTO.
-                // throw new ExcepcionApi(400, $mensajeError);
+                // ! Error por default.
+                throw new Exception($mensajeError, 404);
             }
         }
     }

@@ -29,5 +29,22 @@ class Error
             'mensaje' => 'No se pudo conectar a la base de datos',
             'code' => 500,
         ),
+        'errorSintaxis' => array(
+            'mensaje' => 'Error de sintaxis SQL	',
+            'code' => 400,
+        ),
+        'correoNoExiste' => array (
+            'mensaje' => 'Datos no validos',
+            'code' => 404,
+        ),
+        'passwordYCorreoFaltan' => array (
+            'mensaje' => 'Se requieren el correo y la contraseña',
+            'code' => 404,
+        ),
+        'correoExistente' => array (
+            'mensaje' => 'Correo ya existe',
+            'code' => 404,
+        ),
+
     );
 }
