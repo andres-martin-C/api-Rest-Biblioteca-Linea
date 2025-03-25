@@ -76,6 +76,8 @@ if (!in_array($methodHttp, $metodosHttpPermitidos)) throw new Exception( Error::
 
 // TODO: Llamar a un metodo static de la clases para saber que hacer y no tener que crear instancias de la clase del controller.
 $elValorRetorno = $ClassController::procesoRealizar($url, $methodHttp);
+// * Asignacion de valores para la respuesta de la petición
+$respuestaHttp->formatoDeVolucion = $formato;
 $respuestaHttp->estado = $elValorRetorno['status'];
 $respuestaHttp->mensaje = $elValorRetorno['mensaje'];
 $respuestaHttp->enviarMensaje();
